@@ -31,6 +31,17 @@
 		return $token;
 	}
 
+	function validation_errors($error_message){
+		$error_message = <<<DELIMITER
+			<div class="alert alert-danger alert-dismissible" role="alert">
+					<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+					<span aria-hidden="true">&times;</span></button>
+					<strong>Warning</strong> $error_message
+			</div>
+DELIMITER;
+					return $error_message;
+	}
+
 	/***** VALIDATION FUNCTION *****/
 
 	function validate_user_registration(){
@@ -78,16 +89,7 @@
 
 			if(!empty($errors)){
 				foreach ($errors as $error) {
-					
-				$message = <<<DELIMITER
-
-					<div class="alert alert-danger alert-dismissible" role="alert">
-  						<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-    						<span aria-hidden="true">&times;</span></button>
-    						<strong>Warning</strong> $error
-					</div>
-DELIMITER;
-					echo $message;
+					echo validation_errors($error);
 				}
 			}
 		}
