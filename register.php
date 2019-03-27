@@ -30,11 +30,9 @@
 								<div class="form-group">
 									<input type="text" name="first_name" id="first_name" tabindex="1" class="form-control" placeholder="First Name" value="" required >
 								</div>
-
 								<div class="form-group">
 									<input type="text" name="last_name" id="last_name" tabindex="1" class="form-control" placeholder="Last Name" value="" required >
 								</div>
-
 								<div class="form-group">
 									<input type="text" name="username" id="username" tabindex="1" class="form-control" placeholder="Username" value="" required >
 								</div>

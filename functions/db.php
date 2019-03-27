@@ -27,5 +27,3 @@ function confirm($result){
 		die("Query failed". mysqli_error($con));
 	}
 }
-
-?>
