@@ -62,6 +62,10 @@ DELIMITER;
 		}
 	}
 
+	function send_email($email, $subject, $msg, $headers){
+		return mail($email, $subject, $msg, $headers);
+	}
+
 	/***** VALIDATION FUNCTION *****/
 
 	function validate_user_registration(){
@@ -121,7 +125,8 @@ DELIMITER;
 				}
 			}else{
 				if(register_user($first_name, $last_name, $username, $email, $password)){
-					echo "User Registered";
+					set_message("<p class='bg-success text-center'>Please check your email or spam folder for activation link.</p>");
+					redirect("index.php");
 				}
 			}
 		}
@@ -129,25 +134,38 @@ DELIMITER;
 
 	function register_user($first_name, $last_name, $username, $email, $password){
 
-	$first_name = escape($first_name);
-	$last_name = escape($last_name);
-	$username = escape($username);
-	$email = escape($email);
-	$password = escape($password);
+		$first_name = escape($first_name);
+		$last_name = escape($last_name);
+		$username = escape($username);
+		$email = escape($email);
+		$password = escape($password);
 
-	if(email_exist($email)){
-		return false;
-	}else if(username_exist($username)){
-		return false;
-	}else{
+		if(email_exist($email)){
+			return false;
+		}else if(username_exist($username)){
+			return false;
+		}else{
 
-		$password = md5($password);
-		$validation_code = md5($username.microtime());
-		$sql = "INSERT INTO users(first_name, last_name, username, email, password, validation_code, active)";
-		$sql.= "VALUES('$first_name', '$last_name', '$username', '$email', '$password', '$validation_code', 0)";
-		$result = query($sql);
-		confirm($result);
-		
-		return true;
+			$password = md5($password);
+			$validation_code = md5($username.microtime());
+			$sql = "INSERT INTO users(first_name, last_name, username, email, password, validation_code, active)";
+			$sql.= "VALUES('$first_name', '$last_name', '$username', '$email', '$password', '$validation_code', 0)";
+			$result = query($sql);
+			confirm($result);
+
+			$subject = "Activate Account";
+			$msg = "Please click the link to activate account 
+			https://localhost/login/activate.php?email=$email&code=$validation_code
+			";
+			$headers = "From: noreply@myweb.com";
+
+			send_email($email, $subject, $msg, $headers);
+			
+			return true;
+		}
 	}
-}
+
+
+
+	
+?>
