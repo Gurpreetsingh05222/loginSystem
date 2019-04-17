@@ -198,3 +198,68 @@ DELIMITER;
  		}
  	}
  }
+
+ /******** Validate User Login********/
+
+ function validate_user_login(){
+ 	$errors = [];
+
+ 	$min = 3;
+ 	$max = 20;
+
+ 	if($_SERVER['REQUEST_METHOD'] == "POST"){
+ 		$email = clean($_POST['email']);
+ 		$password = clean($_POST['password']);
+
+ 		if(empty($email)){
+ 			$errors[] = "Email cannot be empty";
+ 		}
+
+ 		if(empty($password)){
+ 			$errors[] = "Password cannot be empty";
+ 		}
+
+ 		if(!empty($errors)){
+			foreach ($errors as $error) {
+				echo validation_errors($error);
+			}
+ 		}else{
+ 			if(user_login($email, $password)){
+ 				redirect("admin.php");
+ 			}else{
+ 				echo validation_errors("Login credentials invalid");
+ 			}
+ 		}
+ 	}
+ }
+
+ function user_login($email, $password){
+ 	$sql = "SELECT password, id FROM users WHERE email = '".escape($email)."' ";
+ 	$result = query($sql);
+
+ 	if(row_count($result) == 1){
+
+ 		$row = fetch_array($result);
+ 		$db_password = $row['password'];
+
+ 		if(md5($password) == $db_password){
+
+ 			$_SESSION['email'] = $email;
+ 			return true;
+ 		}else{
+ 			return false;
+ 		}
+
+ 		return true;
+ 	}else{
+ 		return false;
+ 	}
+ }
+
+ function logged_in(){
+ 	if(isset($_SESSION['email'])){
+ 		return true;
+ 	}else{
+ 		return false;
+ 	}
+ }

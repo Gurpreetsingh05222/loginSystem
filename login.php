@@ -3,7 +3,9 @@
 <?php include("includes/nav.php") ?>
 	
 	<div class="row">
-		<div class="col-lg-6 col-lg-offset-3">						<?php display_message(); ?>
+		<div class="col-lg-6 col-lg-offset-3">
+			<?php display_message(); ?>
+			<?php validate_user_login(); ?>
 		</div>
 	</div>
     	<div class="row">
@@ -25,11 +27,11 @@
 							<div class="col-lg-12">
 								<form id="login-form"  method="post" role="form" style="display: block;">
 									<div class="form-group">
-										<input type="text" name="email" id="email" tabindex="1" class="form-control" placeholder="Email" required>
+										<input type="text" name="email" id="email" tabindex="1" class="form-control" placeholder="Email">
 									</div>
 									<div class="form-group">
 										<input type="password" name="password" id="login-
-										password" tabindex="2" class="form-control" placeholder="Password" required>
+										password" tabindex="2" class="form-control" placeholder="Password">
 									</div>
 									<div class="form-group text-center">
 										<input type="checkbox" tabindex="3" class="" name="remember" id="remember">
