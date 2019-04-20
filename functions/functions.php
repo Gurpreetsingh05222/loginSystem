@@ -132,8 +132,8 @@ DELIMITER;
 					redirect("index.php");
 				}
 			}
-		}
-	}
+		} // Post request
+	} // validate user registration END
 
 /******** Register User ********/ 
 
@@ -168,7 +168,7 @@ DELIMITER;
 			
 			return true;
 		}
-	}
+	} // Register user END
 
 /******** Activate User ********/
 
@@ -197,9 +197,9 @@ DELIMITER;
 
  				redirect("login.php");
  			}
- 		}
- 	}
- }
+ 		} // Email isset
+ 	} // Get request
+ } // Activate user END
 
  /******** Validate User Login********/
 
@@ -233,8 +233,8 @@ DELIMITER;
  				echo validation_errors("Login credentials invalid");
  			}
  		}
- 	}
- }
+ 	} // Post request
+ } // Validate user login END
 
  /********User Login********/ 
 
@@ -263,7 +263,7 @@ DELIMITER;
  	}else{
  		return false;
  	}
- }
+ } // User login END
 
  function logged_in(){
  	if(isset($_SESSION['email']) || isset($_COOKIE['email'])){
@@ -271,4 +271,33 @@ DELIMITER;
  	}else{
  		return false;
  	}
- }
+ } // logged in END
+
+ /******** Recover Password ********/ 
+
+ function recover_password(){
+
+ 	if($_SERVER['REQUEST_METHOD'] == "POST"){
+
+ 		if(isset($_SESSION['token']) && $_POST['token'] === $_SESSION['token']){
+ 			
+ 			$email = clean($_POST['email']);
+
+ 			if(email_exist($email)){
+
+ 				$validation_code = md5($email, microtime());
+ 				$subject = "Please reset your password";
+ 				$message = "Password reset code {$validation_code} 
+ 					Click here to reset password http://localhost/code.php?email=$email&code=$validation_code
+ 				";
+ 				$headers = "From: noreply@websiteName.com";
+
+ 				send_email($email, $subject, $message, $headers);
+
+ 			}// Email send
+
+ 		} //Token check
+
+ 	} // Post request
+
+ } // recover function END
