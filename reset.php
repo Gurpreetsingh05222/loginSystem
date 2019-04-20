@@ -1,6 +1,8 @@
 <?php include("includes/header.php") ?>
 
 	<div class="row">
+		
+		<?php password_reset(); ?>
 
 	</div>
     	<div class="row">
@@ -33,6 +35,7 @@
 											</div>
 										</div>
 									</div>
+									<input type="hidden" class="hide" name="token" id="token" value="<?php echo token_generator(); ?>">
 								</form>
 							</div>
 						</div>
