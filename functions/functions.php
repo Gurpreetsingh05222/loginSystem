@@ -285,19 +285,72 @@ DELIMITER;
 
  			if(email_exist($email)){
 
- 				$validation_code = md5($email, microtime());
+ 				$validation_code = md5($email.microtime());
+
+ 				setcookie('temp_code', $validation_code, time() + 60);
+
+ 				$sql = " UPDATE users SET validation_code = '" .escape($validation_code). "' WHERE email = '".escape($email)."' ";
+ 				$result = query($sql);
+ 				confirm($result);
+
  				$subject = "Please reset your password";
  				$message = "Password reset code {$validation_code} 
  					Click here to reset password http://localhost/code.php?email=$email&code=$validation_code
  				";
  				$headers = "From: noreply@websiteName.com";
 
- 				send_email($email, $subject, $message, $headers);
+ 				if(!send_email($email, $subject, $message, $headers)){
 
- 			}// Email send
+ 					echo validation_errors("Email could not be sent");
+ 				
+ 				}
 
+ 			}else{
+ 				echo validation_errors("Email does not exist");
+ 			}
+
+ 		}else{
+ 			redirect("index.php");
  		} //Token check
 
  	} // Post request
 
  } // recover function END
+
+
+/******** VALIDATION CODE FOR RECOVER PASSWORD ********/
+
+ function validate_code(){
+
+ 	if(isset($_COOKIE['temp_code'])){
+
+ 			if(!isset($_GET['email']) && !isset($_GET['code'])){
+ 				redirect("index.php");
+ 			}else if (empty($_GET['email']) || empty($_GET['code']) ) {
+ 				redirect("index.php");
+ 			}else{
+
+ 				if(isset($_POST['code'])){
+ 					$email = clean($_GET['email']);
+
+ 					$validation_code = clean($_POST['code']);
+
+ 					$sql = " SELECT id FROM users WHERE validation_code = '".escape($validation_code)."' AND email = '".escape($email)."' ";
+ 					$result = query($sql);
+
+ 					if(row_count($result) == 1){
+ 						redirect("reset.php");
+ 					}else{
+ 						echo validation_errors("Sorry wrong validation code");
+ 					}
+
+ 				}
+
+ 			}
+
+ 	}else{
+ 		set_message("<p class='bg-danger text-center'>Sorry validation cookie expired.</p>");
+ 		redirect("recover.php");
+ 	}
+
+ }
