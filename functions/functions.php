@@ -1,6 +1,6 @@
 <?php 
 
-	/***** HELPER FUNCTION *****/
+/******** HELPER FUNCTION ********/
 
 	function clean($string){
 		return htmlentities($string);
@@ -66,7 +66,7 @@ DELIMITER;
 		return mail($email, $subject, $msg, $headers);
 	}
 
-	/***** VALIDATION FUNCTION *****/
+/******** VALIDATION FUNCTION ********/
 
 	function validate_user_registration(){
 
@@ -135,6 +135,8 @@ DELIMITER;
 		}
 	}
 
+/******** Register User ********/ 
+
 	function register_user($first_name, $last_name, $username, $email, $password){
 
 		$first_name = escape($first_name);
@@ -168,7 +170,7 @@ DELIMITER;
 		}
 	}
 
-/*** Activate User ***/
+/******** Activate User ********/
 
  function activate_user(){
  	if($_SERVER['REQUEST_METHOD'] == "GET"){
@@ -210,6 +212,7 @@ DELIMITER;
  	if($_SERVER['REQUEST_METHOD'] == "POST"){
  		$email = clean($_POST['email']);
  		$password = clean($_POST['password']);
+ 		$remember = isset($_POST['remember']);
 
  		if(empty($email)){
  			$errors[] = "Email cannot be empty";
@@ -224,7 +227,7 @@ DELIMITER;
 				echo validation_errors($error);
 			}
  		}else{
- 			if(user_login($email, $password)){
+ 			if(user_login($email, $password, $remember)){
  				redirect("admin.php");
  			}else{
  				echo validation_errors("Login credentials invalid");
@@ -233,7 +236,9 @@ DELIMITER;
  	}
  }
 
- function user_login($email, $password){
+ /********User Login********/ 
+
+ function user_login($email, $password, $remember){
  	$sql = "SELECT password, id FROM users WHERE email = '".escape($email)."' ";
  	$result = query($sql);
 
@@ -243,6 +248,10 @@ DELIMITER;
  		$db_password = $row['password'];
 
  		if(md5($password) == $db_password){
+
+ 			if($remember == "on"){
+ 				setcookie('email', $email, time() + 86400);
+ 			}
 
  			$_SESSION['email'] = $email;
  			return true;
@@ -257,7 +266,7 @@ DELIMITER;
  }
 
  function logged_in(){
- 	if(isset($_SESSION['email'])){
+ 	if(isset($_SESSION['email']) || isset($_COOKIE['email'])){
  		return true;
  	}else{
  		return false;
